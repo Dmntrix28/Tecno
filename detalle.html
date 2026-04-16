@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PokePulse | Detalle</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body data-page="detalle">
+    <div class="aurora"></div>
+    <header class="topbar glass">
+      <h1>PokePulse ⚡</h1>
+      <nav>
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="lista.html" class="nav-link">Lista</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <button id="backBtn" class="btn">← Volver a la lista</button>
+      <div id="detailStatus" class="status">Cargando detalle...</div>
+      <section id="pokemonDetail"></section>
+    </main>
+
+    <script src="js/api.js" defer></script>
+    <script src="js/navigation.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
