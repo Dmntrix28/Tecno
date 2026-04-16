@@ -6,19 +6,22 @@
     <title>PokePulse | Lista</title>
     <link rel="stylesheet" href="css/styles.css" />
   </head>
+
   <body data-page="lista">
     <div class="aurora"></div>
+
     <header class="topbar glass">
       <h1>PokePulse ⚡</h1>
       <nav>
         <a href="index.html" class="nav-link">Inicio</a>
-        <a href="lista.html" class="nav-link">Lista</a>
+        <a href="lista.html" class="nav-link active">Lista</a>
       </nav>
     </header>
 
     <main class="container">
       <section class="section-head">
         <h2>Pokédex interactiva</h2>
+
         <div class="actions-row">
           <input
             id="searchInput"
@@ -31,7 +34,12 @@
       </section>
 
       <div id="status" class="status">Cargando datos...</div>
+
+      <!-- GRID DE POKEMON -->
       <section id="pokemonGrid" class="grid"></section>
+
+      <!-- 🔥 PAGINACIÓN (LO QUE TE FALTABA) -->
+      <div id="pagination" class="pagination"></div>
     </main>
 
     <script src="js/api.js" defer></script>

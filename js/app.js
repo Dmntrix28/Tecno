@@ -1,7 +1,11 @@
 const state = {
   list: [],
   filtered: [],
+  allPokemons: [],
 };
+
+let currentPage = 1;
+const limit = 50;
 
 function getIdFromUrl(url) {
   const parts = url.split('/').filter(Boolean);
@@ -24,7 +28,7 @@ function renderPokemonCards(items) {
   if (!grid) return;
 
   if (!items.length) {
-    grid.innerHTML = '<p class="status">No hay resultados para tu búsqueda.</p>';
+    grid.innerHTML = '<p class="status">No hay resultados.</p>';
     return;
   }
 
@@ -42,37 +46,113 @@ function renderPokemonCards(items) {
     })
     .join('');
 
-  const cards = grid.querySelectorAll('.pokemon-card');
-  cards.forEach((card) => {
+  document.querySelectorAll('.pokemon-card').forEach((card) => {
     card.addEventListener('click', () => {
-      goToDetail(card.dataset.name);
+      localStorage.setItem('selectedPokemon', card.dataset.name);
+      window.location.href = 'detalle.html';
     });
   });
 }
 
-async function initListPage() {
+async function loadAllPokemons() {
+  if (state.allPokemons.length) return;
+
+  const data = await fetchPokemonList(1200, 0);
+  state.allPokemons = data.results;
+}
+
+async function loadPage(page = 1) {
+  const grid = document.getElementById('pokemonGrid');
+  const offset = (page - 1) * limit;
+
   try {
     renderStatus('Cargando Pokédex...');
-    const data = await fetchPokemonList(20, 0);
+    grid.innerHTML = '';
+
+    const data = await fetchPokemonList(limit, offset);
+
     state.list = data.results;
     state.filtered = data.results;
-    renderPokemonCards(state.list);
-    renderStatus(`Mostrando ${state.list.length} Pokémon.`, false);
+
+    renderPokemonCards(state.filtered);
+
+    renderStatus(`Página ${page} - ${state.list.length} Pokémon`, false);
   } catch (error) {
     renderStatus(`Error: ${error.message}`, true);
   }
+}
+
+function renderPagination() {
+  const container = document.getElementById('pagination');
+  if (!container) return;
+
+  const totalPages = 20;
+  container.innerHTML = '';
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = 'page-btn';
+
+    if (i === currentPage) btn.classList.add('active');
+
+    btn.addEventListener('click', () => {
+      currentPage = i;
+      loadPage(currentPage);
+      renderPagination();
+    });
+
+    container.appendChild(btn);
+  }
+}
+
+// 🔥 SUGERENCIA SIMPLE (tipo "quisiste decir")
+function suggestPokemon(term) {
+  return state.allPokemons.find((p) =>
+    p.name.includes(term[0])
+  );
+}
+
+function initListPage() {
+  loadPage(currentPage);
+  renderPagination();
+  loadAllPokemons();
 
   const searchInput = document.getElementById('searchInput');
   const reloadBtn = document.getElementById('reloadBtn');
 
   searchInput?.addEventListener('input', (event) => {
     const term = event.target.value.toLowerCase().trim();
-    state.filtered = state.list.filter((p) => p.name.includes(term));
-    renderPokemonCards(state.filtered);
-    renderStatus(`Coincidencias: ${state.filtered.length}`, false);
+
+    if (!term) {
+      loadPage(currentPage);
+      return;
+    }
+
+    const results = state.allPokemons.filter((p) =>
+      p.name.includes(term)
+    );
+
+    if (results.length === 0) {
+      const suggestion = suggestPokemon(term);
+      renderStatus(
+        suggestion
+          ? `No encontrado. ¿Quisiste decir "${suggestion.name}"?`
+          : 'No se encontraron resultados',
+        true
+      );
+    } else {
+      renderStatus(`Resultados: ${results.length}`, false);
+    }
+
+    renderPokemonCards(results.slice(0, 50));
   });
 
-  reloadBtn?.addEventListener('click', initListPage);
+  reloadBtn?.addEventListener('click', () => {
+    currentPage = 1;
+    loadPage(currentPage);
+    renderPagination();
+  });
 }
 
 function renderDetailCard(pokemon) {
@@ -105,7 +185,7 @@ async function initDetailPage() {
 
   if (!selected) {
     renderStatus(
-      'No hay Pokémon seleccionado. Vuelve a la lista y elige uno.',
+      'No hay Pokémon seleccionado.',
       true,
       'detailStatus'
     );
@@ -113,10 +193,9 @@ async function initDetailPage() {
   }
 
   try {
-    renderStatus(`Consultando datos de ${selected}...`, false, 'detailStatus');
+    renderStatus(`Consultando ${selected}...`, false, 'detailStatus');
     const pokemon = await fetchPokemonDetailByName(selected);
     renderDetailCard(pokemon);
-    renderStatus('Detalle cargado correctamente.', false, 'detailStatus');
   } catch (error) {
     renderStatus(`Error: ${error.message}`, true, 'detailStatus');
   }

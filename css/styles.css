@@ -308,3 +308,35 @@ input[type='search'] {
     display: grid;
   }
 }
+
+/* ===== PAGINACIÓN ===== */
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.page-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #151931;
+  color: var(--text);
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.page-btn:hover {
+  background: var(--primary);
+  color: #041018;
+  transform: translateY(-2px);
+}
+
+.page-btn.active {
+  background: var(--primary);
+  color: #041018;
+  font-weight: 700;
+  box-shadow: 0 0 10px #7cff67aa;
+}
