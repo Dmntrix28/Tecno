@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PokePulse | Lista</title>
+    <title>Pokementrix ⚡</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
     <link rel="stylesheet" href="css/styles.css" />
   </head>
 
@@ -11,7 +12,7 @@
     <div class="aurora"></div>
 
     <header class="topbar glass">
-      <h1>PokePulse ⚡</h1>
+      <h1>Pokementrix ⚡</h1>
       <nav>
         <a href="index.html" class="nav-link">Inicio</a>
         <a href="lista.html" class="nav-link active">Lista</a>
@@ -23,13 +24,18 @@
         <h2>Pokédex interactiva</h2>
 
         <div class="actions-row">
+
           <input
             id="searchInput"
             type="search"
             placeholder="Buscar Pokémon..."
             aria-label="Buscar Pokémon"
           />
+
+          <!-- BOTONES -->
           <button id="reloadBtn" class="btn">Recargar</button>
+          <button id="sortBtn" class="btn">Ordenar A-Z</button>
+
         </div>
       </section>
 
@@ -38,7 +44,7 @@
       <!-- GRID DE POKEMON -->
       <section id="pokemonGrid" class="grid"></section>
 
-      <!-- 🔥 PAGINACIÓN (LO QUE TE FALTABA) -->
+      <!-- PAGINACIÓN -->
       <div id="pagination" class="pagination"></div>
     </main>
 

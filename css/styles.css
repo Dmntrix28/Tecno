@@ -310,33 +310,40 @@ input[type='search'] {
 }
 
 /* ===== PAGINACIÓN ===== */
+
 .pagination {
   margin-top: 30px;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .page-btn {
-  padding: 8px 14px;
+  min-width: 38px;
+  height: 38px;
   border-radius: 10px;
-  border: none;
-  background: #151931;
+  border: 1px solid #ffffff1f;
+  background: #0f1328cc;
   color: var(--text);
   cursor: pointer;
-  transition: 0.25s ease;
+  font-size: 14px;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(6px);
 }
 
+/* hover */
 .page-btn:hover {
-  background: var(--primary);
-  color: #041018;
   transform: translateY(-2px);
+  border-color: #ffffff55;
+  background: #151a33;
 }
 
+/* activa */
 .page-btn.active {
-  background: var(--primary);
+  background: linear-gradient(135deg, #7cff67, #5227ff);
   color: #041018;
-  font-weight: 700;
-  box-shadow: 0 0 10px #7cff67aa;
+  font-weight: bold;
+  box-shadow: 0 0 10px #7cff6780;
+  border: none;
 }

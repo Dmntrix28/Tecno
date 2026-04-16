@@ -6,6 +6,11 @@ const state = {
 
 let currentPage = 1;
 const limit = 50;
+let asc = true;
+
+// 🔥 NUEVO
+let isSorted = false;
+let sortedList = [];
 
 function getIdFromUrl(url) {
   const parts = url.split('/').filter(Boolean);
@@ -63,12 +68,27 @@ async function loadAllPokemons() {
 
 async function loadPage(page = 1) {
   const grid = document.getElementById('pokemonGrid');
-  const offset = (page - 1) * limit;
 
   try {
     renderStatus('Cargando Pokédex...');
     grid.innerHTML = '';
 
+    if (isSorted) {
+      const start = (page - 1) * limit;
+      const end = start + limit;
+
+      const pageData = sortedList.slice(start, end);
+
+      state.list = pageData;
+      state.filtered = pageData;
+
+      renderPokemonCards(pageData);
+
+      renderStatus(`Página ${page} (ordenado)`, false);
+      return;
+    }
+
+    const offset = (page - 1) * limit;
     const data = await fetchPokemonList(limit, offset);
 
     state.list = data.results;
@@ -86,30 +106,92 @@ function renderPagination() {
   const container = document.getElementById('pagination');
   if (!container) return;
 
-  const totalPages = 20;
+  const totalPokemons = 1200;
+  const totalPages = Math.ceil(totalPokemons / limit);
+
   container.innerHTML = '';
 
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement('button');
-    btn.textContent = i;
-    btn.className = 'page-btn';
+  // <
+  const prev = document.createElement('button');
+  prev.textContent = '<';
+  prev.className = 'page-btn';
+  prev.disabled = currentPage === 1;
 
-    if (i === currentPage) btn.classList.add('active');
-
-    btn.addEventListener('click', () => {
-      currentPage = i;
+  prev.onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
       loadPage(currentPage);
       renderPagination();
-    });
+    }
+  };
+
+  container.appendChild(prev);
+
+  let start = Math.max(1, currentPage - 2);
+  let end = Math.min(totalPages, currentPage + 2);
+
+  if (start > 1) {
+    addPageButton(1);
+
+    if (start > 2) {
+      const dots = document.createElement('span');
+      dots.textContent = '...';
+      dots.style.padding = '8px';
+      container.appendChild(dots);
+    }
+  }
+
+  for (let i = start; i <= end; i++) {
+    addPageButton(i);
+  }
+
+  if (end < totalPages) {
+    if (end < totalPages - 1) {
+      const dots = document.createElement('span');
+      dots.textContent = '...';
+      dots.style.padding = '8px';
+      container.appendChild(dots);
+    }
+
+    addPageButton(totalPages);
+  }
+
+  // >
+  const next = document.createElement('button');
+  next.textContent = '>';
+  next.className = 'page-btn';
+  next.disabled = currentPage === totalPages;
+
+  next.onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      loadPage(currentPage);
+      renderPagination();
+    }
+  };
+
+  container.appendChild(next);
+
+  function addPageButton(page) {
+    const btn = document.createElement('button');
+    btn.textContent = page;
+    btn.className = 'page-btn';
+
+    if (page === currentPage) btn.classList.add('active');
+
+    btn.onclick = () => {
+      currentPage = page;
+      loadPage(currentPage);
+      renderPagination();
+    };
 
     container.appendChild(btn);
   }
 }
 
-// 🔥 SUGERENCIA SIMPLE (tipo "quisiste decir")
 function suggestPokemon(term) {
   return state.allPokemons.find((p) =>
-    p.name.includes(term[0])
+    p.name.startsWith(term[0])
   );
 }
 
@@ -120,11 +202,14 @@ function initListPage() {
 
   const searchInput = document.getElementById('searchInput');
   const reloadBtn = document.getElementById('reloadBtn');
+  const sortBtn = document.getElementById('sortBtn');
 
+  // BUSCADOR
   searchInput?.addEventListener('input', (event) => {
     const term = event.target.value.toLowerCase().trim();
 
     if (!term) {
+      isSorted = false;
       loadPage(currentPage);
       return;
     }
@@ -148,10 +233,37 @@ function initListPage() {
     renderPokemonCards(results.slice(0, 50));
   });
 
+  // RECARGAR
   reloadBtn?.addEventListener('click', () => {
+    isSorted = false;
     currentPage = 1;
     loadPage(currentPage);
     renderPagination();
+  });
+
+  // ORDENAR (CORREGIDO)
+  sortBtn?.addEventListener('click', () => {
+    if (!isSorted) {
+      sortedList = [...state.allPokemons].sort((a, b) => {
+        return asc
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      });
+
+      isSorted = true;
+    } else {
+      sortedList.reverse();
+    }
+
+    asc = !asc;
+    currentPage = 1;
+
+    renderStatus(`Ordenado ${asc ? "A-Z" : "Z-A"}`, false);
+
+    loadPage(currentPage);
+    renderPagination();
+
+    sortBtn.textContent = asc ? "Ordenar A-Z" : "Ordenar Z-A";
   });
 }
 
@@ -184,11 +296,7 @@ async function initDetailPage() {
   const selected = localStorage.getItem('selectedPokemon');
 
   if (!selected) {
-    renderStatus(
-      'No hay Pokémon seleccionado.',
-      true,
-      'detailStatus'
-    );
+    renderStatus('No hay Pokémon seleccionado.', true, 'detailStatus');
     return;
   }
 
