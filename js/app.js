@@ -203,7 +203,27 @@ function initListPage() {
   const searchInput = document.getElementById('searchInput');
   const reloadBtn = document.getElementById('reloadBtn');
   const sortBtn = document.getElementById('sortBtn');
+  // 🔥 AUTO BUSQUEDA DESDE HOME
+  const autoSearch = localStorage.getItem('pokemonSearch');
 
+  if (autoSearch) {
+    const searchInput = document.getElementById('searchInput');
+
+    if (searchInput) {
+      searchInput.value = autoSearch;
+
+      setTimeout(() => {
+        const results = state.allPokemons.filter((p) =>
+          p.name.includes(autoSearch.toLowerCase())
+        );
+
+        renderStatus(`Resultados: ${results.length}`, false);
+        renderPokemonCards(results.slice(0, 50));
+      }, 800);
+    }
+
+    localStorage.removeItem('pokemonSearch');
+  }
   // BUSCADOR
   searchInput?.addEventListener('input', (event) => {
     const term = event.target.value.toLowerCase().trim();

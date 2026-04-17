@@ -1,47 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokementrix | Inicio</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-  <body data-page="inicio">
-    <div class="aurora"></div>
-    <header class="topbar glass">
-      <h1>Pokementrix ⚡</h1>
-      <nav>
-        <a href="index.html" class="nav-link">Inicio</a>
-        <a href="lista.html" class="nav-link">Lista</a>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pokementrix⚡</title>
 
-    <main class="container hero">
-      <section class="hero-copy">
-        <p class="pill">OPCIÓN A · HTML + CSS + JavaScript puro</p>
-        <h2>Explora Pokémon con estilo futurista</h2>
+  <link rel="icon" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body data-page="inicio">
+  <div class="aurora"></div>
+
+  <!-- HEADER -->
+  <header class="topbar glass">
+    <a href="index.html" class="logo-link">
+      <img src="img/logo.png" alt="Pokementrix" class="logo-img">
+    </a>
+    <nav>
+      <a href="index.html" class="nav-link active">Inicio</a>
+      <a href="lista.html" class="nav-link">Lista</a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+
+      <div class="hero-copy">
+        <span class="pill">Proyecto personal • Dmntrix</span>
+
+        <h2>Explora el mundo Pokémon con estilo único</h2>
+
         <p>
-          App desarrollada con <strong>fetch()</strong>, manipulación del DOM,
-          manejo de JSON, eventos y navegación entre páginas.
+          Pokementrix nace de la combinación entre Pokémon y “Dmntrix”, un alias que representa
+          estilo, tecnología y creatividad dentro de este mundo digital. Aquí puedes explorar cientos
+          de Pokémon, buscar rápidamente por nombre, ver sus estadísticas y descubrir cada detalle
+          de forma visual y dinámica. Una experiencia pensada para entrenadores que quieren ir más allá
+          de una simple Pokédex.  
+          <br><br>
+          Creado por Dmntrix (entrenador Luis Angel Paredes Torrez).
         </p>
-        <div class="hero-actions">
-          <a href="lista.html" class="btn btn-primary">Ver Pokédex</a>
-        </div>
-      </section>
-      <section class="hero-card led-card">
-        <h3>¿Qué incluye?</h3>
-        <ul>
-          <li>✅ Listado dinámico</li>
-          <li>✅ Detalle completo por Pokémon</li>
-          <li>✅ Manejo de errores</li>
-          <li>✅ Animaciones + bordes LED</li>
-          <li>✅ Diseño responsive</li>
-        </ul>
-      </section>
-    </main>
 
-    <script src="js/navigation.js" defer></script>
-    <script src="js/app.js" defer></script>
-  </body>
+        <a href="lista.html" class="btn btn-primary">Ver Pokédex</a>
+      </div>
+
+      <!-- 🔥 CARD PRINCIPAL -->
+      <div class="card hero-card" data-search="pikachu">
+
+        <div class="wrapper">
+          <img src="img/1.png" class="cover-image" />
+        </div>
+
+        <img src="img/1.2.png" class="logo" />
+        <img src="img/1.1.png" class="character" />
+
+      </div>
+
+    </section>
+
+    <!-- 🔥 CARDS ABAJO -->
+    <section class="cards-bottom">
+
+      <!-- CHARIZARD -->
+      <div class="card" data-search="charizard">
+        <div class="wrapper">
+          <img src="img/2.png" class="cover-image" />
+        </div>
+        <img src="img/2.2.png" class="logo" />
+        <img src="img/2.1.png" class="character" />
+      </div>
+
+      <!-- BLASTOISE -->
+      <div class="card" data-search="blastoise">
+        <div class="wrapper">
+          <img src="img/3.png" class="cover-image" />
+        </div>
+        <img src="img/3.2.png" class="logo" />
+        <img src="img/3.1.png" class="character" />
+      </div>
+
+      <!-- VENUSAUR -->
+      <div class="card" data-search="venusaur">
+        <div class="wrapper">
+          <img src="img/4.png" class="cover-image" />
+        </div>
+        <img src="img/4.2.png" class="logo" />
+        <img src="img/4.1.png" class="character" />
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JS PARA CLICK EN CARDS -->
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        const name = card.dataset.search;
+        if (!name) return;
+
+        localStorage.setItem('pokemonSearch', name);
+        window.location.href = 'lista.html';
+      });
+    });
+  </script>
+
+</body>
 </html>
